@@ -6,6 +6,7 @@ const path = require("path");
 const errorHandler = require("./../api/middleware/error.middleware");
 
 const authRoutes = require("./../api/routes/auth.routes");
+const transferRoutes = require("./../api/routes/transaction.routes");
 const userRoutes = require("./../api/routes/user.routes");
 
 module.exports = function (app) {
@@ -56,6 +57,7 @@ module.exports = function (app) {
 
   app.use("/api/auth", authRoutes);
   app.use("/api/user", userRoutes);
+  app.use("/api/transfer", transferRoutes);
 
   app.use(errorHandler.errorMiddleware);
 };

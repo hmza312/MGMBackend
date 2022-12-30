@@ -29,10 +29,6 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
 
-  accountNumber: {
-    type: String,
-  },
-
   role: {
     type: Boolean,
 

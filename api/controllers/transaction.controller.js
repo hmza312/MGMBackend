@@ -2,38 +2,40 @@ const { omit } = require("lodash");
 const { Transaction } = require("../data/transaction.model");
 const { User, validateUpdateProfile } = require("../data/user.model");
 
-
-
 module.exports.transferMoney = async (req, res) => {
   console.log("Inside Tranfer Money api");
-
+  debugger;
   const {
     body: { amountToBeProcessed, transactionTo },
-    user: { _id: transactionBy },
+    user: { _id },
   } = req;
+  console.log(_id);
   try {
-    const transaction = new Transaction({
+    const transaction = await new Transaction({
       amountToBeProcessed,
-      transactionBy,
+      transactionBy: _id,
       transactionTo,
-      transactionType: "Deposit"
+      transactionType: "Deposit",
     });
 
-    transaction.save();
-
+    const senderData = await User.findById({ _id: _id });
+    console.log(senderData);
+    const balanceUpdated = senderData.accountBalance - amountToBeProcessed;
     const updateTransferBy = await User.findByIdAndUpdate(
-      { _id: id },
-      { accountBalance: accountBalance - amountToBeProcessed },
+      { _id: _id },
+      { accountBalance: balanceUpdated },
       { new: true, upsert: true }
     );
-
+    transaction.save();
+    const recieverData = await User.findOne({ username: transactionTo });
+    const balanceNew = recieverData.accountBalance + amountToBeProcessed;
     const updateTransferTo = await User.findByIdAndUpdate(
-      { username: transactionTo },
-      { accountBalance: accountBalance + amountToBeProcessed },
+      { _id: recieverData._id },
+      { accountBalance: balanceNew },
       { new: true, upsert: true }
     );
 
-    res.send({ blog, error: false, message: "Transaction done successfully" });
+    res.send({ error: false, message: "Transaction done successfully" });
   } catch (err) {
     console.log("Transfer money api failed: ", err.message);
     res.status(500).send({
@@ -42,7 +44,6 @@ module.exports.transferMoney = async (req, res) => {
     });
   }
 };
-
 
 module.exports.profile = async (req, res) => {
   console.log("In profile api");
