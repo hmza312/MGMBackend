@@ -1,9 +1,4 @@
-const {
-  User,
-  validateUser,
-  validateLoginUser,
-  validateEmail,
-} = require("../data/user.model");
+const { User, validateLoginUser } = require("../data/user.model");
 const jwt = require("jsonwebtoken");
 
 const bcrypt = require("bcryptjs");
@@ -14,14 +9,8 @@ const { pick, isEmpty } = require("lodash");
 
 module.exports.signUpUser = async (req, res) => {
   console.log("in signup api");
-  const { error } = validateUser(req.body);
-  if (error)
-    return res
-      .status(400)
-      .send({ error: true, message: error.details[0].message });
-
   let user = await User.findOne({
-    email: req.body.email.toLowerCase(),
+    email: req.body.email,
     username: req.body.username,
     isDeleted: false,
   });
@@ -39,14 +28,14 @@ module.exports.signUpUser = async (req, res) => {
       "password",
       "phone",
       "role",
-      "accountBalance"
+      "accountBalance",
     ]),
     createdAt: new Date(),
     updatedAt: new Date(),
   });
 
-  user.email = user.email.toLowerCase();
-  user.username = user.username.toLowerCase();
+  user.email = user.email;
+  user.username = user.username;
   // user.profileImg =
   //   "https://gulf-academy-profile-images.s3.amazonaws.com/default-profile-image.png";
   const salt = await bcrypt.genSalt(10);
@@ -66,34 +55,12 @@ module.exports.loginUser = async (req, res) => {
   console.log("in user login api");
   const {
     body,
-    body: { email, password },
+    body: { username, password },
   } = req;
-
-  const { error: validateEmailError } = validateEmail({ email });
-
-  const { error } = validateLoginUser(body);
-  if (error)
-    return res
-      .status(406)
-      .send({ error: true, message: error.details[0].message });
-
-  const fieldToMatchforLogin = validateEmailError ? "username" : "email";
-
-  if (fieldToMatchforLogin === "email") {
-    const response = await User.findOne({ email }, { isDeleted: 1 });
-    if (!isEmpty(response) && response.isDeleted === true) {
-      return res.status(401).send({ error: true, message: "No User Found" });
-    }
-  } else if (fieldToMatchforLogin === "username") {
-    const response = await User.findOne({ username: email }, { isDeleted: 1 });
-    if (!isEmpty(response) && response.isDeleted === true) {
-      return res.status(401).send({ error: true, message: "No User Found" });
-    }
-  }
 
   let user = await User.findOne(
     {
-      [fieldToMatchforLogin]: email.toLowerCase(),
+      username: username,
     },
     {
       email: 1,
@@ -125,7 +92,7 @@ module.exports.loginUser = async (req, res) => {
           },
           error: false,
           message: "Login successful",
-    });
+        });
       }
       return res
         .status(400)

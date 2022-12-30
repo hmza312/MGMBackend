@@ -8,8 +8,6 @@ const errorHandler = require("./../api/middleware/error.middleware");
 const authRoutes = require("./../api/routes/auth.routes");
 const userRoutes = require("./../api/routes/user.routes");
 
-const blogRoutes = require("./../api/routes/blog.routes");
-
 module.exports = function (app) {
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
@@ -59,6 +57,5 @@ module.exports = function (app) {
   app.use("/api/auth", authRoutes);
   app.use("/api/user", userRoutes);
 
-  app.use("/api/blog", blogRoutes);
   app.use(errorHandler.errorMiddleware);
 };
