@@ -9,8 +9,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { pick, isEmpty } = require("lodash");
 
-const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(process.env.SEND_GRID_KEY);
+// const sgMail = require("@sendgrid/mail");
+// sgMail.setApiKey(process.env.SEND_GRID_KEY);
 
 module.exports.signUpUser = async (req, res) => {
   console.log("in signup api");
@@ -33,14 +33,13 @@ module.exports.signUpUser = async (req, res) => {
 
   user = new User({
     ...pick(req.body, [
-      "firstName",
-      "lastName",
       "username",
       "email",
       "dateOfBirth",
       "password",
       "phone",
       "role",
+      "accountBalance"
     ]),
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -48,8 +47,8 @@ module.exports.signUpUser = async (req, res) => {
 
   user.email = user.email.toLowerCase();
   user.username = user.username.toLowerCase();
-  user.profileImg =
-    "https://gulf-academy-profile-images.s3.amazonaws.com/default-profile-image.png";
+  // user.profileImg =
+  //   "https://gulf-academy-profile-images.s3.amazonaws.com/default-profile-image.png";
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
 
@@ -97,16 +96,13 @@ module.exports.loginUser = async (req, res) => {
       [fieldToMatchforLogin]: email.toLowerCase(),
     },
     {
-      firstName: 1,
-      lastName: 1,
       email: 1,
       password: 1,
       username: 1,
-      profileImg: 1,
       role: 1,
       phone: 1,
       dateOfBirth: 1,
-      resume: 1,
+      accountBalance: 1,
       _id: 1,
     }
   );
@@ -118,21 +114,18 @@ module.exports.loginUser = async (req, res) => {
           data: {
             token,
             user: pick(user, [
-              "firstName",
-              "lastName",
               "email",
               "username",
               "phone",
               "dateOfBirth",
-              "profileImg",
               "role",
-              "resume",
+              "accountBalance",
               "_id",
             ]),
           },
           error: false,
           message: "Login successful",
-        });
+    });
       }
       return res
         .status(400)

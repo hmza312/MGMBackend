@@ -1,0 +1,5 @@
+NODE_ENV="development"
+JWT_PRIVATE_KEY="u9ujg5sezkv9"
+DB="mongodb+srv://Opportunist:opportunist123@cluster0.dukdg.mongodb.net/TheOpporunist?retryWrites=true&w=majority"
+SEND_GRID_KEY="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"
+SENDER_EMAIL="mousuleman@gmail.com"
