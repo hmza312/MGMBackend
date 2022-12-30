@@ -45,6 +45,22 @@ module.exports.transferMoney = async (req, res) => {
   }
 };
 
+module.exports.getAllTransactions = async (req, res) => {
+  console.log("Inside Get All transaction API");
+  const {
+    user: { _id },
+  } = req;
+  try {
+    const allTransactions = await Transaction.find({ isDeleted: false });
+ 
+    res.send({ allTransactions, message: "Transactions Fetched successfully" });
+  } catch (err) {
+    console.log("get all transaction api failed: ", err);
+    return res.status(500).send({ error: true, message: err.message });
+  }
+};
+
+
 module.exports.profile = async (req, res) => {
   console.log("In profile api");
   try {

@@ -13,4 +13,10 @@ router.post(
   transactionCtrl.transferMoney
 );
 
+router.get(
+  "/allTransactions",
+  authMiddle,
+  isDeleted,
+  transactionCtrl.getAllTransactions
+);
 module.exports = router;
