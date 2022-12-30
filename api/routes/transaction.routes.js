@@ -19,4 +19,11 @@ router.get(
   isDeleted,
   transactionCtrl.getAllTransactions
 );
+
+router.post(
+  "/exchangeMoney",
+  authMiddle,
+  isDeleted,
+  transactionCtrl.exchangeMoney
+);
 module.exports = router;

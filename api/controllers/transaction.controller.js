@@ -51,7 +51,7 @@ module.exports.getAllTransactions = async (req, res) => {
     user: { _id },
   } = req;
   try {
-    const allTransactions = await Transaction.find({ isDeleted: false });
+    const allTransactions = await Transaction.find({ transactionBy: _id });
  
     res.send({ allTransactions, message: "Transactions Fetched successfully" });
   } catch (err) {
@@ -59,6 +59,40 @@ module.exports.getAllTransactions = async (req, res) => {
     return res.status(500).send({ error: true, message: err.message });
   }
 };
+
+module.exports.exchangeMoney = async (req, res) => {
+  console.log("Inside Exchange Money api");
+  debugger;
+  const {
+    body: { amountToBeProcessed, count10,count20,count50,count100,count500,count1000,count5000 },
+    user: { _id },
+  } = req;
+  console.log(_id);
+  try {
+    const transaction = await new Transaction({
+      amountToBeProcessed,
+      transactionBy: _id,
+      transactionType: "Exchange",
+      countOfTen: count10,
+      countOfTwenty: count20,
+      countOfFifty: count50,
+      countOfHundrend:count100,
+      countOfFiveHundrend:count500,
+      countOfThousand:count1000,
+      countOfFiveThousand:count5000
+    });
+   
+    transaction.save();
+    res.send({ error: false, message: "Exchange done successfully" });
+  } catch (err) {
+    console.log("Exchange money api failed: ", err.message);
+    res.status(500).send({
+      error: true,
+      message: err.message,
+    });
+  }
+};
+
 
 
 module.exports.profile = async (req, res) => {
