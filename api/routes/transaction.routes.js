@@ -12,12 +12,25 @@ router.post(
   isDeleted,
   transactionCtrl.transferMoney
 );
+router.post(
+  "/withdrawMoney",
+  authMiddle,
+  isDeleted,
+  transactionCtrl.withdrawMoney
+);
 
 router.get(
   "/allTransactions",
   authMiddle,
   isDeleted,
   transactionCtrl.getAllTransactions
+);
+
+router.get(
+  "/allWithdrawTransactions",
+  authMiddle,
+  isDeleted,
+  transactionCtrl.getWithdrawTransactions
 );
 
 router.post(
